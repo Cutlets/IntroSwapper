@@ -7,3 +7,8 @@ IntroSwapper
 Blank videoes from below:
 
 https://github.com/esc0rtd3w/blank-intro-videos
+
+
+# EXE 파일 다운로드하기
+
+exe 폴더에서 zip파일을 다운받아 압축해제 후 exe파일을 실행합니다
