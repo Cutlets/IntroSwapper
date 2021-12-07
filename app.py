@@ -118,13 +118,19 @@ class WindowClass(QDialog, form_class):
             b_file = os.path.join(backup_path, original_f)
 
             if os.path.isfile(b_file):
-                copyReply = QMessageBox.question(self, '파일 중복', '파일이 존재합니다.\n덮어쓰시겠습니까?',
+                copyReply = QMessageBox.question(self, '파일 중복', '백업파일이 존재합니다.\n덮어쓰시겠습니까?',
                 QMessageBox.Yes, QMessageBox.No)
                 if copyReply == QMessageBox.Yes:
-                    shutil.copyfile(o_file, b_file)
-                    self.progressBar.setValue(1)
-                    shutil.copyfile(s_file, o_file)
-                    self.progressBar.setValue(2)
+                    if o_file.find('Icarus') != -1:
+                        shutil.copyfile(o_file, b_file)
+                        self.progressBar.setValue(1)
+                        os.remove(o_file)
+                        self.progressBar.setValue(2)
+                    else:
+                        shutil.copyfile(o_file, b_file)
+                        self.progressBar.setValue(1)
+                        shutil.copyfile(s_file, o_file)
+                        self.progressBar.setValue(2)
 
                     result = QMessageBox()
                     result.setWindowTitle("결과")
@@ -145,10 +151,18 @@ class WindowClass(QDialog, form_class):
                 self.progressBar.setValue(3)
 
             else:
-                shutil.copyfile(o_file, b_file)
-                self.progressBar.setValue(1)
-                shutil.copyfile(s_file, o_file)
-                self.progressBar.setValue(2)
+                if o_file.find('Icarus') != -1:
+                    print("found")
+                    shutil.copyfile(o_file, b_file)
+                    self.progressBar.setValue(1)
+                    if os.path.isfile(o_file):
+                        os.remove(o_file)
+                    self.progressBar.setValue(2)
+                else:
+                    shutil.copyfile(o_file, b_file)
+                    self.progressBar.setValue(1)
+                    shutil.copyfile(s_file, o_file)
+                    self.progressBar.setValue(2)
 
                 result = QMessageBox()
                 result.setWindowTitle("결과")
@@ -163,6 +177,17 @@ class WindowClass(QDialog, form_class):
             self.progressBar.setRange(0, 1)
             self.progressBar.setValue(1)
             print("No file matched.")
+
+        self.dirInfo.clear()
+        folder = self.folderDir.text()
+        file_list = os.listdir(folder)
+
+        if len(file_list) == 0:
+            file_list.append("파일이 존재하지 않습니다.")
+
+        for f in file_list:
+            if os.path.isfile(os.path.join(folder, f)):
+                self.dirInfo.addItem(f)
 
     def restoreFile(self):
         self.progressBar.setValue(0)
@@ -181,7 +206,7 @@ class WindowClass(QDialog, form_class):
 
         backup_path = os.path.join(".","bvid")
 
-        if type(self.dirInfo.currentItem()) == type(None):
+        if (type(self.dirInfo.currentItem()) == type(None)) and work_path.find('Icarus') == -1:
             result = QMessageBox()
             result.setWindowTitle("결과")
             result.setInformativeText("선택된 파일이 없습니다.")
@@ -191,7 +216,18 @@ class WindowClass(QDialog, form_class):
             result.exec_()
             return
 
-        original_f = str(self.dirInfo.currentItem().text())
+        original_f = ""
+        if work_path.find('Icarus') != -1 :
+            original_f1 = "startup_01.mp4"
+            original_f2 = "rw_logo.mp4"
+            if os.path.isfile(os.path.join(work_path, original_f1)):
+                original_f = original_f2
+            elif os.path.isfile(os.path.join(work_path, original_f2)):
+                original_f = original_f1
+            else:
+                original_f = str(self.dirInfo.currentItem().text())
+        else:
+            original_f = str(self.dirInfo.currentItem().text())
 
         if os.path.isfile(os.path.join(backup_path, original_f)):
             self.progressBar.setRange(0, 3)
@@ -223,6 +259,17 @@ class WindowClass(QDialog, form_class):
             result.exec_()
 
             self.progressBar.setValue(1)
+
+        self.dirInfo.clear()
+        folder = self.folderDir.text()
+        file_list = os.listdir(folder)
+
+        if len(file_list) == 0:
+            file_list.append("파일이 존재하지 않습니다.")
+
+        for f in file_list:
+            if os.path.isfile(os.path.join(folder, f)):
+                self.dirInfo.addItem(f)
 
 if __name__=="__main__":
     app = QApplication(sys.argv)

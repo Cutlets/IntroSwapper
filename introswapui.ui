@@ -211,7 +211,7 @@
     </font>
    </property>
    <property name="text">
-    <string>ver 0.1</string>
+    <string>ver 0.3</string>
    </property>
    <property name="wordWrap">
     <bool>false</bool>
