@@ -225,7 +225,7 @@ class WindowClass(QDialog, form_class):
             elif os.path.isfile(os.path.join(work_path, original_f2)):
                 original_f = original_f1
             else:
-                original_f = str(self.dirInfo.currentItem().text())
+                original_f = "startup_01.mp4"
         else:
             original_f = str(self.dirInfo.currentItem().text())
 
